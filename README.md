@@ -31,13 +31,13 @@ This pretends you're going to the store to buy gift cards - super useful for pho
 ## Screenshots
 
 ### GUI Gift Cards Tab
-![Gift Cards Tab](images/GUIMenu.png)
+![Gift Cards Tab](GUIMenu.png)
 
 ### GUI Timer Tab  
-![Timer Tab](images/GUIStoreTimer.png)
+![Timer Tab](GUIStoreTimer.png)
 
 ### CLI Menu
-![CLI Menu](images/CLI.png)
+![CLI Menu](CLI.png)
 
 ## How to Use It
 
