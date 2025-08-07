@@ -3,6 +3,8 @@ Scambaiting tool thingie by Baitrix
 
 Generate fake gift card codes to waste scammers' time. These codes look real but are completely fake and worthless.
 
+This would have been a website if I had the money to host one lmao
+
 **WARNING: These are FAKE codes only for scambaiting. Never try to redeem them on real websites.**
 
 ## Easy Setup
