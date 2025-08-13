@@ -46,7 +46,7 @@ $PYTHON_CMD -m pip install --upgrade pip
 
 echo ""
 echo "[3/4] Installing required packages..."
-$PYTHON_CMD -m pip install customtkinter requests playsound
+$PYTHON_CMD -m pip install customtkinter requests playsound3
 
 echo ""
 echo "[4/4] Creating launcher scripts..."

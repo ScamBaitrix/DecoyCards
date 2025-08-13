@@ -3,8 +3,6 @@ Scambaiting tool thingie by Baitrix
 
 Generate fake gift card codes to waste scammers' time. These codes look real but are completely fake and worthless.
 
-This would have been a website if I had the money to host one lmao
-
 **WARNING: These are FAKE codes only for scambaiting. Never try to redeem them on real websites.**
 
 ## Easy Setup
@@ -33,13 +31,13 @@ This pretends you're going to the store to buy gift cards - super useful for pho
 ## Screenshots
 
 ### GUI Gift Cards Tab
-![Gift Cards Tab](GUIMenu.png)
+![Gift Cards Tab](images/GUIMenu.png)
 
 ### GUI Timer Tab  
-![Timer Tab](GUIStoreTimer.png)
+![Timer Tab](images/GUIStoreTimer.png)
 
 ### CLI Menu
-![CLI Menu](CLI.png)
+![CLI Menu](images/CLI.png)
 
 ## How to Use It
 

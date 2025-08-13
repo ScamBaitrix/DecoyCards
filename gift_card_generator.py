@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+DecoyCards - Fake Gift Card Generator for Scambaiting
+By Baitrix
+
+This tool generates fake gift card codes and provides a store timer
+to help scambaiters waste scammers' time. The codes are intentionally
+invalid and should be tested before use to ensure they don't work.
+
+IMPORTANT: These are FAKE codes for scambaiting purposes only!
+Always test codes first to confirm they are invalid.
+"""
 
 import random
 import string
@@ -10,6 +21,7 @@ import threading
 import sys
 from datetime import datetime
 
+# Try to import GUI library - gracefully handle if not available
 try:
     import customtkinter as ctk
     GUI_AVAILABLE = True
@@ -18,37 +30,85 @@ except ImportError:
 
 
 class DecoyCards:
+    """
+    Main class that handles fake gift card generation and scambaiting utilities.
+    
+    This class provides methods to:
+    - Generate fake gift card codes for various platforms
+    - Calculate realistic travel times for "going to store" scenarios  
+    - Play notification sounds when timers complete
+    - Bring the application window to foreground for attention
+    """
     def __init__(self):
+        # Character set for generating fake codes (uppercase letters + digits)
         self.chars = string.ascii_uppercase + string.digits
 
     def clear_screen(self):
+        """Clear the terminal screen (works on Windows and Unix-like systems)"""
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def play_sound(self):
-        system = platform.system().lower()
-
+        """
+        Play a notification sound to alert the user when timers complete.
+        Uses playsound3 library for cross-platform compatibility with fallbacks:
+        - Windows: Uses system message beep
+        - macOS: Plays Glass.aiff system sound  
+        - Linux: Tries various system sound files
+        - Fallback: Terminal bell character if all else fails
+        """
         try:
+            from playsound3 import playsound
+            # Try to play a system notification sound
+            system = platform.system().lower()
+            
             if system == 'windows':
+                # Use Windows system sound
                 import winsound
                 winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
             elif system == 'darwin':
-                os.system('afplay /System/Library/Sounds/Glass.aiff')
-            elif system == 'linux':
+                # Try macOS system sound first
                 try:
-                    subprocess.run(['paplay', '/usr/share/sounds/alsa/Front_Left.wav'],
-                                   check=True, capture_output=True)
+                    playsound('/System/Library/Sounds/Glass.aiff', block=False)
                 except:
-                    try:
-                        subprocess.run(['aplay', '/usr/share/sounds/alsa/Front_Left.wav'],
-                                       check=True, capture_output=True)
-                    except:
-                        print('\a')
+                    os.system('afplay /System/Library/Sounds/Glass.aiff')
+            elif system == 'linux':
+                # Try Linux system sounds
+                sound_files = [
+                    '/usr/share/sounds/alsa/Front_Left.wav',
+                    '/usr/share/sounds/ubuntu/stereo/bell.ogg',
+                    '/usr/share/sounds/gnome/default/alerts/glass.ogg'
+                ]
+                
+                sound_played = False
+                for sound_file in sound_files:
+                    if os.path.exists(sound_file):
+                        try:
+                            playsound(sound_file, block=False)
+                            sound_played = True
+                            break
+                        except:
+                            continue
+                
+                if not sound_played:
+                    # Fallback to terminal bell
+                    print('\a')
             else:
                 print('\a')
-        except:
+        except ImportError:
+            # Fallback if playsound3 not available
+            print('\a')
+        except Exception:
+            # Any other error, use terminal bell
             print('\a')
 
     def bring_to_foreground(self):
+        """
+        Bring the application window to the front to get user's attention.
+        Platform-specific implementations:
+        - Windows: Uses Win32 API to set foreground window
+        - macOS: Activates Terminal application
+        - Linux: Uses wmctrl or xdotool to activate window
+        """
         system = platform.system().lower()
 
         try:
@@ -91,7 +151,12 @@ class DecoyCards:
         except Exception:
             pass
 
+    # === FAKE GIFT CARD GENERATORS ===
+    # Each method generates codes in the format expected by that platform
+    # All codes are intentionally fake and should be tested to ensure invalidity
+
     def generate_xbox(self):
+        """Generate fake Xbox Live gift card code (format: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX)"""
         segments = []
         for _ in range(5):
             segment = ''.join(random.choice(self.chars) for _ in range(5))
@@ -99,6 +164,7 @@ class DecoyCards:
         return '-'.join(segments)
 
     def generate_psn(self):
+        """Generate fake PlayStation Network gift card code (format: XXXX-XXXX-XXXX)"""
         segments = []
         for _ in range(3):
             segment = ''.join(random.choice(self.chars) for _ in range(4))
@@ -106,23 +172,28 @@ class DecoyCards:
         return '-'.join(segments)
 
     def generate_amazon(self):
+        """Generate fake Amazon gift card code (format: XXXX-XXXXXX-XXXXX)"""
         segment1 = ''.join(random.choice(self.chars) for _ in range(4))
         segment2 = ''.join(random.choice(self.chars) for _ in range(6))
         segment3 = ''.join(random.choice(self.chars) for _ in range(5))
         return f"{segment1}-{segment2}-{segment3}"
 
     def generate_google_play(self):
+        """Generate fake Google Play gift card code (format: XXXXXXX-XXXXXXX-XXXXX)"""
         segment1 = ''.join(random.choice(self.chars) for _ in range(7))
         segment2 = ''.join(random.choice(self.chars) for _ in range(7))
         segment3 = ''.join(random.choice(self.chars) for _ in range(5))
         return f"{segment1}-{segment2}-{segment3}"
 
     def generate_apple(self):
+        """Generate fake Apple/iTunes gift card code (16 characters, starts with X)"""
+        # Apple uses specific character set excluding confusing letters
         apple_chars = '0123456789ABCDEFGHJKMNPQRSTVWXY'
         code = 'X' + ''.join(random.choice(apple_chars) for _ in range(15))
         return code
 
     def generate_steam(self):
+        """Generate fake Steam wallet code (format: XXXXX-XXXXX-XXXXX)"""
         segments = []
         for _ in range(3):
             segment = ''.join(random.choice(self.chars) for _ in range(5))
@@ -130,16 +201,19 @@ class DecoyCards:
         return '-'.join(segments)
 
     def generate_walmart(self):
+        """Generate fake Walmart gift card with card number and PIN"""
         card_number = ''.join(random.choice(string.digits) for _ in range(16))
         pin = ''.join(random.choice(string.digits) for _ in range(4))
         return f"Card: {card_number[:4]}-{card_number[4:8]}-{card_number[8:12]}-{card_number[12:16]} | PIN: {pin}"
 
     def generate_target(self):
+        """Generate fake Target gift card with card number and PIN"""
         card_number = ''.join(random.choice(string.digits) for _ in range(15))
         pin = ''.join(random.choice(string.digits) for _ in range(4))
         return f"Card: {card_number} | PIN: {pin}"
 
     def generate_visa(self):
+        """Generate fake Visa gift card with full details (card, expiry, CVV, claim code)"""
         card_number = ''.join(random.choice(string.digits) for _ in range(16))
         exp_month = random.choice(
             ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'])
@@ -149,6 +223,12 @@ class DecoyCards:
         return f"Card: {card_number[:4]}-{card_number[4:8]}-{card_number[8:12]}-{card_number[12:16]} | Exp: {exp_month}/{exp_year} | CVV: {cvv} | Claim: {claim_code}"
 
     def get_card_info(self, card_type):
+        """
+        Get metadata about different gift card types including:
+        - Display name
+        - Expected format
+        - Test URL where codes can be validated (if available)
+        """
         card_info = {
             'xbox': {
                 'name': 'Xbox Live Gift Card',
@@ -199,6 +279,16 @@ class DecoyCards:
         return card_info.get(card_type, {})
 
     def generate(self, card_type, count=1):
+        """
+        Generate one or more fake gift cards of the specified type.
+        
+        Args:
+            card_type: Type of card to generate (xbox, psn, amazon, etc.)
+            count: Number of cards to generate (default: 1)
+            
+        Returns:
+            tuple: (list_of_cards, card_info_dict) or (None, error_message)
+        """
         generators = {
             'xbox': self.generate_xbox,
             'psn': self.generate_psn,
@@ -222,7 +312,21 @@ class DecoyCards:
 
         return cards, card_info
 
+    # === STORE TIMER UTILITIES ===
+    # These methods help create realistic "going to store" scenarios
+
     def calculate_travel_time(self, distance, unit, speed_type):
+        """
+        Calculate realistic travel time based on distance and transportation method.
+        
+        Args:
+            distance: Distance to travel
+            unit: 'miles' or 'km' 
+            speed_type: 'walking', 'biking', or 'car'
+            
+        Returns:
+            tuple: (hours, minutes, seconds, total_minutes) or None if invalid
+        """
         speeds = {
             'walking': {'mph': 3, 'kmh': 5},
             'biking': {'mph': 12, 'kmh': 20},
@@ -247,6 +351,7 @@ class DecoyCards:
         return hours, minutes, seconds, time_minutes
 
     def format_time(self, hours, minutes, seconds):
+        """Format time duration into human-readable string"""
         if hours > 0:
             return f"{hours}h {minutes}m {seconds}s"
         elif minutes > 0:
@@ -255,6 +360,14 @@ class DecoyCards:
             return f"{seconds}s"
 
     def countdown_timer(self, total_minutes, phase):
+        """
+        Run a countdown timer for the specified duration.
+        Shows real-time countdown and plays sound + brings window to foreground when complete.
+        
+        Args:
+            total_minutes: Duration of timer in minutes
+            phase: Description of what phase this timer represents (e.g. "Going to store")
+        """
         print(f"\n{phase} timer started!")
         print("Press Ctrl+C to stop the timer early")
 
@@ -282,6 +395,19 @@ class DecoyCards:
             print(f"\n\n{phase} timer stopped early.")
 
     def store_timer(self):
+        """
+        Interactive store timer that helps create realistic "going to store" scenarios.
+        
+        Prompts user for:
+        - Distance to store and transportation method (for realistic timing)
+        - OR manual time specification
+        
+        Runs two phases:
+        1. "Going to store" timer
+        2. "Returning home" timer
+        
+        This helps scambaiters create believable delays when "buying" gift cards.
+        """
         self.clear_screen()
         print("DecoyCards - Store Timer")
         print("Tell your scammer you're going to the store!")
@@ -377,23 +503,39 @@ class DecoyCards:
 
 
 class DecoyCardsGUI:
+    """
+    Modern GUI interface for DecoyCards using CustomTkinter.
+    
+    Provides a user-friendly graphical interface with:
+    - Gift card generation with copy-to-clipboard functionality
+    - Visual store timer with progress bars and dialogs
+    - Dark theme with modern styling
+    - Real-time timer updates and notifications
+    - Cross-platform window management for attention-getting
+    """
     def __init__(self):
+        # Initialize core components
         self.decoy = DecoyCards()
+        
+        # Timer state management
         self.timer_active = False
         self.current_phase = None
         self.total_seconds = 0
         self.remaining_seconds = 0
         self.timer_job = None
 
+        # Set up modern dark theme
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
 
+        # Create main window
         self.root = ctk.CTk()
         self.root.title("DecoyCards - Scambait tool thingie by Baitrix")
         self.root.geometry("900x650")
         self.root.resizable(True, True)
         self.root.minsize(800, 600)
 
+        # Configure grid layout
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
 
